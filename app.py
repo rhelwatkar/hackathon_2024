@@ -32,10 +32,11 @@ def process_payment():
 
 @app.route('/generate_qr', methods=['POST'])
 def generate_qr():
+    fixed_upi_id = "test@okhdfcbank"
     amount = request.form['amount']
     
     # Create a QR code with a simple UPI payment URL (replace with actual logic)
-    upi_url = f"upi://pay?pa=example@upi&pn=BharatPay&mc=1234&tid=5678&tr={random.randint(1000, 9999)}&tn=Payment%20Request&am={amount}&cu=INR"
+    upi_url = f"upi://pay?pa={fixed_upi_id}&pn=Payment Request&am={amount}&cu=INR"
     qr = qrcode.make(upi_url)
     
     # Convert the QR code image to a base64 string
