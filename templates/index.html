@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePay</title>
+    <style>
+        /* Basic Styling */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* Mobile Device Frame */
+        .mobile-frame {
+            width: 375px;
+            height: 812px;
+            background: #000; /* Black outer frame */
+            border-radius: 50px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Notch */
+        .notch {
+            width: 210px;
+            height: 30px;
+            background: black;
+            border-radius: 15px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        /* Simulated Notch Details */
+        .notch::before,
+        .notch::after {
+            content: '';
+            position: absolute;
+            background: #333;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 50%;
+        }
+
+        .notch::before {
+            width: 10px;
+            height: 10px;
+            left: 20px;
+        }
+
+        .notch::after {
+            width: 50px;
+            height: 5px;
+            right: 20px;
+        }
+
+        /* App Screen */
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Content Container */
+        .container {
+            width: 100%;
+            height: 100%;
+            max-width: 375px;
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 20px;
+            box-sizing: border-box;
+            color: white;
+            overflow-y: auto; /* Ensures scrollable content */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007AFF;
+            border: none;
+            border-radius: 8px;
+            margin: 10px 0;
+            margin-bottom: 15px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        } */
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #007AFF;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #005BBB;
+        }
+
+        button.secondary {
+            background-color: #34C759;
+        }
+
+        button.secondary:hover {
+            background-color: #005BBB;
+        }
+
+
+        button_small{
+            width: 20%;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #007AFF;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button_small:hover {
+            background-color: #005BBB;
+        }
+
+        button_small.secondary {
+            background-color: #34C759;
+        }
+
+        button_small.secondary:hover {
+            background-color: #28A745;
+        }
+
+        /* input {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 16px;
+        } */
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 5px rgba(0, 122, 255, 0.5);
+        }
+
+        input_small {
+            width: 70%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 16px;
+        }
+
+        input_small:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 5px rgba(0, 122, 255, 0.5);
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        /* .qr-container {
+            display: none;
+            align-items: center;
+            margin-top: 20px;
+        } */
+
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            margin-top: 20px; /* Adjust spacing if needed */
+        }
+
+        /* .qr-container img {
+            width: 80%;
+            max-width: 250px;
+            height: auto;
+            margin-top: 10px;
+            border: 5px solid white;
+            border-radius: 10px;
+        } */
+
+        .qr-container img {
+            max-width: 80%; /* Ensures the QR code doesn’t exceed the container width */
+            height: auto;   /* Maintains aspect ratio */
+            border: 2px solid white; /* Optional: Adds a border around the QR code */
+            border-radius: 10px; /* Optional: Adds rounded corners */
+            padding: 10px; /* Optional: Adds spacing inside the border */
+            background-color: rgba(255, 255, 255, 0.8); /* Optional: White background for QR code */
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Frame -->
+    <div class="mobile-frame">
+        <!-- Notch -->
+        <div class="notch"></div>
+
+        <!-- App Screen -->
+        <div class="screen">
+            <div class="container">
+                <h1>SecurePay</h1>
+
+                <!-- Navigation Buttons -->
+                <div id="main_buttons">
+                    <button onclick="showSendPayment()">Send Payment</button>
+                    <button class="secondary" onclick="showRequestPayment()">Request Payment</button>
+                </div>
+
+                <!-- Send Payment Form -->
+                <div id="send_payment" style="display:none;">
+                    <h2>Send Payment</h2>
+                    <input type="text" id="upi_id" placeholder="Enter UPI ID" />
+                    <input type="text" id="send_amount" placeholder="Enter Amount (₹)" />
+                    <button class="secondary" onclick="generateOtp()">Generate OTP</button>
+                    <input type="text" id="otp" placeholder="Enter OTP" />
+                    <button onclick="processPayment()">Proceed</button>
+                    <button class="secondary" onclick="backToMain()">Back</button>
+                    <p id="send_message" class="message"></p>
+                </div>
+
+                <!-- Request Payment Form -->
+                <div id="request_payment" style="display:none;">
+                    <h2>Request Payment</h2>
+                    <input type="text" id="request_amount" placeholder="Enter Amount (₹)" />
+                    <button onclick="generateQr()">Generate QR</button>
+                    <button class="secondary" onclick="backToMain()">Back</button>
+                    <p id="request_message" class="message"></p>
+
+                    <!-- QR Code Display -->
+                    <div class="qr-container">
+                        <img id="qr_code" src="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSendPayment() {
+            document.getElementById("main_buttons").style.display = "none";
+            document.getElementById("send_payment").style.display = "block";
+            document.getElementById("request_payment").style.display = "none";
+        }
+
+        function showRequestPayment() {
+            document.getElementById("main_buttons").style.display = "none";
+            document.getElementById("request_payment").style.display = "block";
+            document.getElementById("send_payment").style.display = "none";
+        }
+
+        // function backToMain() {
+        //     document.getElementById("send_payment").style.display = "none";
+        //     document.getElementById("request_payment").style.display = "none";
+        //     document.getElementById("main_buttons").style.display = "block";
+        // }
+        function backToMain() {
+            document.getElementById("send_payment").style.display = "none";
+            document.getElementById("request_payment").style.display = "none";
+            document.getElementById("main_buttons").style.display = "block";
+
+            // Clear the QR code and hide its container
+            const qrImage = document.getElementById("qr_code");
+            const qrContainer = document.querySelector('.qr-container');
+            qrImage.src = ""; // Clear the QR code image
+            qrContainer.style.display = "none"; // Hide the container
+
+            // Clear OTP message
+            const otpMessage = document.getElementById("send_message");
+            otpMessage.textContent = ""; // Clear the OTP message
+            otpMessage.className = "message"; // Reset message class to default
+        }
+
+        // Generate OTP
+        function generateOtp() {
+            // fetch('/generate_otp', { method: 'POST' })
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         currentOtp = data.otp;
+            //         alert("OTP Generated: " + currentOtp);
+            //     });
+            alert("OTP Sent to Mobile Number Associated to UPI Id" )
+        }
+
+        // Process Payment
+        function processPayment() {
+            const upiId = document.getElementById("upi_id").value;
+            const amount = document.getElementById("send_amount").value;
+            const otp = document.getElementById("otp").value;
+
+            fetch('/process_payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `upi_id=${upiId}&amount=${amount}&otp=${otp}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageElement = document.getElementById("send_message");
+                messageElement.textContent = data.message;
+                messageElement.className = "message " + (data.status === "success" ? "success" : "error");
+            });
+        }
+
+        // Generate QR
+        function generateQr() {
+            const amount = document.getElementById("request_amount").value;
+
+            fetch('/generate_qr', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `amount=${amount}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                const qrContainer = document.querySelector('.qr-container');
+                const qrImage = document.getElementById("qr_code");
+                qrImage.src = "data:image/png;base64," + data.qr_image;
+                qrContainer.style.display = "block";
+            });
+        }
+    </script>
+</body>
+</html>

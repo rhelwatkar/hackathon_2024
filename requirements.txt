@@ -1,0 +1,4 @@
+Flask==2.3.2            # For handling web server, routing, and API endpoints
+pyotp==2.7.0            # For generating OTPs (One-Time Passwords)
+qrcode==7.3.1           # For generating QR codes
+Flask-Cors==3.2.2       # For handling Cross-Origin Resource Sharing (CORS), if needed for client-side API calls
